@@ -1,0 +1,9 @@
+;$Id$
+name = "Switch fields position"
+description = "Switch fields position into product content type"
+package = "KTC"
+core = 7.x
+version = "7.x-1.0-1"
+php = 5.x
+
+files[] = "fieldswitch.module"
