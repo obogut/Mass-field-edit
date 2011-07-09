@@ -35,27 +35,33 @@ function fieldswitch_permission() {
 *  Switch field settings main handler
 */
 function fieldswitch_switch_fields() {
-  dsm(fieldswitch_get_content_types());
+  $entity_type = 'node';
+  $source = 'field_product_availability';
+  $dest = 'field_product_store_relation';
+  $bundles = fieldswitch_get_content_types($dest);
+  
+  $info = field_info_instance($entity_type, $dest, 'notebook');
+  dsm($info);
+  
+  if (isset($bundles)) {
+    foreach ($bundles as $bundle) {
+	  
+	}
+  }
   return "1111";
 }
 
 /**
-* Get product content types by present product csv files for import
-* Input parameters: none
+* Get product content types by source field name
+* Input parameters: field name string
 * Result: associative array of product content types
 *
 */
-function fieldswitch_get_content_types() {
-  $path = variable_get('parser_csv_import_folder','');
-  $fls = glob($path.'/*.csv');
-  
-  foreach ($fls as $fl) {
-    $fl = str_replace($path.'/', '', $fl);
-	$fl = str_replace('.csv', '', $fl);
-	$filelist[] = $fl;
+function fieldswitch_get_content_types($fieldname) {
+  if (isset($fieldname)) {
+    $field_settings = field_info_field($fieldname);
+	if (isset($field_settings['bundles']['node'])) return $field_settings['bundles']['node']; else return NULL;
   }
-  
-  unset($fls, $fl);
- return $filelist;	
 }
+
 
