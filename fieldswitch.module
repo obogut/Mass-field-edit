@@ -1,4 +1,39 @@
 <?php
 //$Id$
 
+/**
+*  hook_menu implementation
+*
+*/
+function fieldswitch_menu() {
+  $items = array();
+  $items['fswitch/all'] = array(
+    'title' => 'Перенести поле складів',
+    'page callback' => 'fieldswitch_switch_fields',
+    'access callback' => 'user_access',
+	'access arguments' => array('fswitch field settings'),
+    'type' => MENU_NORMAL_ITEM,  
+  );
+  return $items;
+}
 
+/**
+*  Switch field settings main handler
+*/
+function fieldswitch_switch_fields() {
+  return "1111";
+}
+
+/**
+* hook_permission() implementation
+*
+*/
+function fieldswitch_permission() {
+  $permissions = array(
+    'fswitch field settings' => array(
+	  'title' => t('Автоматично встановлювати параметри відображення обраного поля'),
+	  'description' => t('Надає доступ до равтоматичної заміни параметрів відображення обраного поля відносно іншого поля у всіх обраних типах контенту.'),
+	 ),
+  );
+  return $permissions;
+}
