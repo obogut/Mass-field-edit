@@ -89,6 +89,17 @@ function fieldswitch_switch_fields() {
 	// Save new record.
 	drupal_write_record('ds_layout_settings', $record);
 	
+	//update fieldgroup for store field
+	$group = db_query("SELECT fg.data, id FROM {field_group} fg WHERE fg.group_name = 'group_codes' AND fg.bundle = :bund", array(':bund'=>$bundle))->fetch();
+	
+	$data = unserialize($group->data);
+    $data['children'][] = 'field_product_store_relation';
+    $data = serialize($data);
+
+    db_update('field_group')->fields(array('data'=>$data))->condition('id', $group->id, '=')->execute();
+	
+	
+	
 	// Clear entity info cache.
     cache_clear_all('entity_info', 'cache', TRUE);		
   }
