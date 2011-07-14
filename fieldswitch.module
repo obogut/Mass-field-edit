@@ -43,15 +43,24 @@ function fieldswitch_switch_fields() {
   
   //walk for product bundles
   foreach ($bundles as $bundle) {
-    	
+  
+    //Work with instance
+	$instance = field_read_instance($entity_type, $dest, $bundle);
+	
+	$instance['display']['default']['weight'] = '14';
+    $instance['display']['default']['label'] = 'inline';
+    $instance['display']['default']['type'] = 'taxonomy_term_reference_plain';
+    $instance['display']['default']['module'] = 'taxonomy';
+    $instance['display']['default']['region'] = 'left';
+	
+	field_update_instance($instance);
+    
+    // Layout settings	
 	$old_layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+	//dsm($old_layout);
 	$all_layouts = ds_get_layout_info();
 	$new_layout_key = 'ktc_product_2col';
 	$new_layout = $all_layouts['ktc_product_2col'];
-	
-	/*
-	* Mapping settings must be here
-	*/
 	
 	// Create new record.
     $record = new stdClass();
@@ -61,13 +70,27 @@ function fieldswitch_switch_fields() {
     $record->view_mode = $view_mode;
     $record->layout = $new_layout_key;
     $record->settings = $old_layout['settings'];
-    unset($record->settings['regions']);
-    unset($record->settings['fields']);
+    //unset($record->settings['regions']['right']);
+    //unset($record->settings['fields']);
 	
 	//Remapping
+	//foreach ($old_layout['settings']['regions']['right']) {
+	  $record->settings['regions']['right'][] = $dest;
+	  $record->settings['fields'][$dest] = 'right';
+	//}
 	
-		
-	dsm($all_layouts);
+	// Remove old record.
+    db_delete('ds_layout_settings')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->condition('view_mode', $view_mode)
+      ->execute();
+	  
+	// Save new record.
+	drupal_write_record('ds_layout_settings', $record);
+	
+	// Clear entity info cache.
+    cache_clear_all('entity_info', 'cache', TRUE);		
   }
 
   
