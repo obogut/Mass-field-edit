@@ -36,18 +36,41 @@ function fieldswitch_permission() {
 */
 function fieldswitch_switch_fields() {
   $entity_type = 'node';
+  $view_mode = 'default';
   $source = 'field_product_availability';
   $dest = 'field_product_store_relation';
   $bundles = fieldswitch_get_content_types($dest);
   
-  $info = field_info_instance($entity_type, $dest, 'notebook');
-  dsm($info);
-  
-  if (isset($bundles)) {
-    foreach ($bundles as $bundle) {
-	  
-	}
+  //walk for product bundles
+  foreach ($bundles as $bundle) {
+    	
+	$old_layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+	$all_layouts = ds_get_layout_info();
+	$new_layout_key = 'ktc_product_2col';
+	$new_layout = $all_layouts['ktc_product_2col'];
+	
+	/*
+	* Mapping settings must be here
+	*/
+	
+	// Create new record.
+    $record = new stdClass();
+    $record->id = $entity_type . '|' . $bundle . '|' . $view_mode;;
+    $record->entity_type = $entity_type;
+    $record->bundle = $bundle;
+    $record->view_mode = $view_mode;
+    $record->layout = $new_layout_key;
+    $record->settings = $old_layout['settings'];
+    unset($record->settings['regions']);
+    unset($record->settings['fields']);
+	
+	//Remapping
+	
+		
+	dsm($all_layouts);
   }
+
+  
   return "1111";
 }
 
